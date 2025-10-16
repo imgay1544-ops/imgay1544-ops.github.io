@@ -1,36 +1,53 @@
-const form = document.getElementById('chat-form');
-const input = document.getElementById('chat-input');
-const chatWindow = document.getElementById('chat-window');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="panel-container">
+        <header>
+            <h1>Admin Panel</h1>
+            <button id="logout">Logout</button>
+        </header>
 
-form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const userMessage = input.value.trim();
-    if(!userMessage) return;
+        <main>
+            <section class="section">
+                <h2>Accounts</h2>
+                <table id="accounts-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Account rows go here -->
+                    </tbody>
+                </table>
+            </section>
 
-    addMessage(userMessage, 'user');
-    input.value = '';
+            <section class="section">
+                <h2>Keys</h2>
+                <table id="keys-table">
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Key rows go here -->
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
 
-    // Show typing animation
-    const typingMessage = addMessage("AI is typing...", 'ai');
-
-    try {
-        const res = await fetch('/.netlify/functions/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: userMessage })
-        });
-        const data = await res.json();
-        typingMessage.textContent = data.message; // Replace typing text with actual AI response
-    } catch (err) {
-        typingMessage.textContent = "Error: Unable to get response";
-    }
-});
-
-function addMessage(message, type) {
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message', type);
-    messageDiv.textContent = message;
-    chatWindow.appendChild(messageDiv);
-    chatWindow.scrollTop = chatWindow.scrollHeight;
-    return messageDiv;
-}
+    <script src="script.js"></script>
+</body>
+</html>
