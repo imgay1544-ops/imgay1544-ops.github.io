@@ -2,7 +2,7 @@ const form = document.getElementById('chat-form');
 const input = document.getElementById('chat-input');
 const chatWindow = document.getElementById('chat-window');
 
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const userMessage = input.value.trim();
     if(!userMessage) return;
@@ -10,11 +10,20 @@ form.addEventListener('submit', (e) => {
     addMessage(userMessage, 'user');
     input.value = '';
 
-    // Simulate AI response
-    setTimeout(() => {
-        const aiMessage = `AI says: ${userMessage.split('').reverse().join('')}`;
-        addMessage(aiMessage, 'ai');
-    }, 500);
+    // Show typing animation
+    const typingMessage = addMessage("AI is typing...", 'ai');
+
+    try {
+        const res = await fetch('/.netlify/functions/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userMessage })
+        });
+        const data = await res.json();
+        typingMessage.textContent = data.message; // Replace typing text with actual AI response
+    } catch (err) {
+        typingMessage.textContent = "Error: Unable to get response";
+    }
 });
 
 function addMessage(message, type) {
@@ -23,4 +32,5 @@ function addMessage(message, type) {
     messageDiv.textContent = message;
     chatWindow.appendChild(messageDiv);
     chatWindow.scrollTop = chatWindow.scrollHeight;
+    return messageDiv;
 }
