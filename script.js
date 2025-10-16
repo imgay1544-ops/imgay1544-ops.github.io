@@ -1,31 +1,19 @@
-// Simple login (replace with backend later)
-const loginForm = document.getElementById('login-form');
-const errorMsg = document.getElementById('error-msg');
+// script.js login
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
 
-if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-
-        // Simple frontend check (for testing)
-        if(username === "admin" && password === "password") {
-            localStorage.setItem("loggedIn", "true");
-            window.location.href = "panel.html";
-        } else {
-            errorMsg.textContent = "Invalid credentials!";
-        }
-    });
-}
-
-// Protect panel
-if (window.location.pathname.includes("panel.html")) {
-    if(localStorage.getItem("loggedIn") !== "true") {
-        window.location.href = "index.html";
-    }
-
-    document.getElementById("logout").addEventListener("click", () => {
-        localStorage.removeItem("loggedIn");
-        window.location.href = "index.html";
-    });
-}
+  const res = await fetch("https://your-backend-url/login", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ username, password })
+  });
+  const data = await res.json();
+  if (data.success) {
+    localStorage.setItem("loggedIn", "true");
+    window.location.href = "panel.html";
+  } else {
+    errorMsg.textContent = data.error;
+  }
+});
